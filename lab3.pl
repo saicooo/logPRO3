@@ -44,7 +44,7 @@ find_suitable_phones(RequiredFeatures, SuitablePhones) :-
 ask_purposes([], []).
 ask_purposes([Purpose|Rest], Needed) :-
     purpose_name(Purpose, RussianName),
-    write('Нужен ли телефон для '), write(RussianName), write('? (1 - да, 2 - нет): '),
+    write('Nuzhen li telefon dlya '), write(RussianName), write('? (1 - DA , 2 - NET): '),
     nl,
     read(Answer),
     (Answer == 1 ->
@@ -57,9 +57,9 @@ ask_purposes([Purpose|Rest], Needed) :-
 
 % ====================== ГЛАВНЫЙ ПРЕДИКАТ ======================
 consultant :-
-    write('Добро пожаловать в экспертную систему "Консультант по сотовой связи"!'), nl,
-    write('Я помогу подобрать модель телефона по вашим нуждам.'), nl,
-    write('Отвечайте цифрами: 1 - да, 2 - нет.'), nl, nl,
+    write('Dobro pozhalovat v ekspertnuyu  sistemu  "Konsultant  po  sotovoy  svyazi"!'), nl,
+    write('Ya pomogu podobrat model telefona  po  vashim  nuzhdam.'), nl,
+    write('Otvechayte  tsiframi: 1 - DA, 2 - NET.'), nl, nl,
 
     findall(P, purpose_requires(P, _), PurpList),
     sort(PurpList, Purposes),
@@ -70,11 +70,11 @@ consultant :-
 
     nl,
     (Suitable = [] ->
-        write('К сожалению, полностью подходящих моделей не найдено.'), nl
+        write('K sozhaleniyu, polnostyu podkhodyashchikh modeley ne naydeno..'), nl
     ;
-        write('Рекомендуемые модели телефонов:'), nl,
+        write('Rekomenduyemyye modeli telefonov:'), nl,
         forall(member(Phone, Suitable),
                (write(' - '), write(Phone), nl))
     ),
     nl,
-    write('Спасибо за использование! Для повторного запуска введите ?- consultant.'), nl.
+    write('Spasibo za ispol zovaniye! Dlya povtornogo zapuska vvedite ?- consultant.'), nl.
