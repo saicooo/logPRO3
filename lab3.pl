@@ -15,14 +15,14 @@
 :- consult('kb.pl').   % Загружаем базу знаний
 
 % Названия целей на русском (для красивого вывода вопросов)
-purpose_name(obshchenie, 'общения').
-purpose_name(vyhod_v_internet, 'выхода в Интернет').
-purpose_name(mobilnyy_ofis, 'мобильного офиса').
-purpose_name(fotografiya, 'фотографии').
-purpose_name(igry, 'игр').
-purpose_name(prosmotr_video, 'просмотра видео').
-purpose_name(proslushivanie_muzyki, 'прослушивания музыки').
-purpose_name(rabota_s_dokumentami, 'работы с документами').
+purpose_name(obshchenie, 'obshchenie').
+purpose_name(vyhod_v_internet, 'vyhod v internet').
+purpose_name(mobilnyy_ofis, 'mobilnyy ofis').
+purpose_name(fotografiya, 'fotografiya').
+purpose_name(igry, 'igry').
+purpose_name(prosmotr_video, 'prosmotr video').
+purpose_name(proslushivanie_muzyki, 'proslushivanie muzyki').
+purpose_name(rabota_s_dokumentami, 'rabota s dokumentami').
 
 % ====================== ВСПОМОГАТЕЛЬНЫЕ ПРЕДИКАТЫ ======================
 all_phones(Phones) :-
