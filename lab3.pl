@@ -71,7 +71,7 @@ read_yes_no(Answer) :-
     ; RawAnswer == 2 ->
         Answer = no, !
     ;
-        write('Nekorrektnyi vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
+        write('Nekorrektniy vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
         fail
     ).
 
