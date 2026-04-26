@@ -70,7 +70,7 @@ read_yes_no(Answer) :-
     ; RawAnswer == 2 ->
         Answer = no
     ;
-        write('Nekorrektnyy vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
+        write('Nekorrektny vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
         read_yes_no(Answer)
     ).
 
@@ -112,7 +112,7 @@ ask_adaptive_questions :-
 consultant :-
     write('Dobro pozhalovat v ekspertnuyu  sistemu  "Konsultant  po  sotovoy  svyazi"!'), nl,
     write('Ya pomogu podobrat model telefona  po  vashim  nuzhdam.'), nl,
-    write('Otvechayte  tsiframi: 1- DA ,2- NET.'), nl, nl,
+    write('Otvechayte tsiframi: 1- DA, 2- NET.'), nl, nl,
     init,
     ask_adaptive_questions,
     get(selected_purposes, NeededPurposes),
