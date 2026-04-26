@@ -64,14 +64,15 @@ add_selected_purpose(Purpose) :-
 
 % ====================== ОПРОС С ПРОВЕРКОЙ ВВОДА ======================
 read_yes_no(Answer) :-
+    repeat,
     read(RawAnswer),
     ( RawAnswer == 1 ->
-        Answer = yes
+        Answer = yes, !
     ; RawAnswer == 2 ->
-        Answer = no
+        Answer = no, !
     ;
-        write('Nekorrektny vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
-        read_yes_no(Answer)
+        write('Nekorrektnyi vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
+        fail
     ).
 
 ask_purpose(Purpose) :-
@@ -86,27 +87,23 @@ ask_purpose(Purpose) :-
     ).
 
 % ====================== АДАПТИВНЫЙ ОПРОС ======================
-ask_adaptive_questions :-
-    ask_purpose(obshchenie),
-    ask_purpose(vyhod_v_internet),
-    ( get(vyhod_v_internet, yes) ->
-        ask_purpose(mobilnyy_ofis),
-        ( get(mobilnyy_ofis, yes) ->
-            ask_purpose(rabota_s_dokumentami)
-        ;
-            true
-        ),
-        ask_purpose(prosmotr_video),
-        ( get(prosmotr_video, yes) ->
-            ask_purpose(proslushivanie_muzyki)
-        ;
-            true
-        )
+should_ask(none).
+should_ask(Dependency) :-
+    get(Dependency, yes).
+
+ask_questions_by_dependencies([]).
+ask_questions_by_dependencies([Purpose|Rest]) :-
+    question_depends_on(Purpose, Dependency),
+    ( should_ask(Dependency) ->
+        ask_purpose(Purpose)
     ;
         true
     ),
-    ask_purpose(fotografiya),
-    ask_purpose(igry).
+    ask_questions_by_dependencies(Rest).
+
+ask_adaptive_questions :-
+    findall(Purpose, question_depends_on(Purpose, _), Purposes),
+    ask_questions_by_dependencies(Purposes).
 
 % ====================== ГЛАВНЫЙ ПРЕДИКАТ ======================
 consultant :-

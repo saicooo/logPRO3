@@ -4,6 +4,7 @@
 
 :- dynamic(has_feature/2).
 :- dynamic(purpose_requires/2).
+:- dynamic(question_depends_on/2).
 
 % Какие функции нужны для каждой цели
 purpose_requires(obshchenie, zvonki).
@@ -22,6 +23,16 @@ purpose_requires(igry, bolshoy_ekran).
 purpose_requires(prosmotr_video, ekran_vysokogo_kachestva).
 purpose_requires(proslushivanie_muzyki, horoshie_dinamiki).
 purpose_requires(rabota_s_dokumentami, podderzhka_office).
+
+% Зависимости вопросов для адаптивного опроса
+question_depends_on(obshchenie, none).
+question_depends_on(vyhod_v_internet, none).
+question_depends_on(mobilnyy_ofis, vyhod_v_internet).
+question_depends_on(rabota_s_dokumentami, mobilnyy_ofis).
+question_depends_on(prosmotr_video, vyhod_v_internet).
+question_depends_on(proslushivanie_muzyki, prosmotr_video).
+question_depends_on(fotografiya, none).
+question_depends_on(igry, none).
 
 % Модели телефонов и их функции
 % Модель 1 — бюджетный
