@@ -58,7 +58,7 @@ add_selected_purpose(Purpose) :-
     ( member(Purpose, Current) ->
         true
     ;
-        append(Current, [Purpose], Updated),
+        Updated = [Purpose|Current],
         set(selected_purposes, Updated)
     ).
 
@@ -87,7 +87,7 @@ ask_purpose(Purpose) :-
     ).
 
 % ====================== АДАПТИВНЫЙ ОПРОС ======================
-should_ask(none).
+should_ask(always_ask).
 should_ask(Dependency) :-
     get(Dependency, yes).
 
