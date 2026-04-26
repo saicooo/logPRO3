@@ -13,6 +13,7 @@
 % =============================================
 
 :- consult('kb.pl').   % Загружаем базу знаний
+:- dynamic(memory/2).
 
 % Названия целей на русском (для красивого вывода вопросов)
 purpose_name(obshchenie, 'obshchenie').
@@ -40,30 +41,78 @@ find_suitable_phones(RequiredFeatures, SuitablePhones) :-
     all_phones(AllPhones),
     findall(Phone, (member(Phone, AllPhones), suitable_phone(Phone, RequiredFeatures)), SuitablePhones).
 
-% Рекурсивный опрос пользователя (вопросы не повторяются)
-ask_purposes([], []).
-ask_purposes([Purpose|Rest], Needed) :-
-    purpose_name(Purpose, RussianName),
-    write('Nuzhen li telefon dlya '), write(RussianName), write('? (1- DA ,2- NET): '),
-    nl,
-    read(Answer),
-    (Answer == 1 ->
-        ask_purposes(Rest, NeededRest),
-        Needed = [Purpose|NeededRest]
+% ====================== "СТАТИЧЕСКИЕ ПЕРЕМЕННЫЕ" ======================
+init :-
+    retractall(memory(_, _)),
+    set(selected_purposes, []).
+
+set(Key, Value) :-
+    retractall(memory(Key, _)),
+    assertz(memory(Key, Value)).
+
+get(Key, Value) :-
+    memory(Key, Value).
+
+add_selected_purpose(Purpose) :-
+    get(selected_purposes, Current),
+    ( member(Purpose, Current) ->
+        true
     ;
-        ask_purposes(Rest, NeededRest),
-        Needed = NeededRest
+        Updated = [Purpose|Current],
+        set(selected_purposes, Updated)
     ).
+
+% ====================== ОПРОС С ПРОВЕРКОЙ ВВОДА ======================
+read_yes_no(Answer) :-
+    repeat,
+    read(RawAnswer),
+    ( RawAnswer == 1 ->
+        Answer = yes, !
+    ; RawAnswer == 2 ->
+        Answer = no, !
+    ;
+        write('Nekorrektniy vvod. Vvedite tolko 1 (DA) ili 2 (NET).'), nl,
+        fail
+    ).
+
+ask_purpose(Purpose) :-
+    purpose_name(Purpose, RussianName),
+    write('Nuzhen li telefon dlya '), write(RussianName), write('? (1- DA, 2- NET): '), nl,
+    read_yes_no(Answer),
+    set(Purpose, Answer),
+    ( Answer == yes ->
+        add_selected_purpose(Purpose)
+    ;
+        true
+    ).
+
+% ====================== АДАПТИВНЫЙ ОПРОС ======================
+should_ask(always_ask).
+should_ask(Dependency) :-
+    get(Dependency, yes).
+
+ask_questions_by_dependencies([]).
+ask_questions_by_dependencies([Purpose|Rest]) :-
+    question_depends_on(Purpose, Dependency),
+    ( should_ask(Dependency) ->
+        ask_purpose(Purpose)
+    ;
+        true
+    ),
+    ask_questions_by_dependencies(Rest).
+
+ask_adaptive_questions :-
+    findall(Purpose, question_depends_on(Purpose, _), Purposes),
+    ask_questions_by_dependencies(Purposes).
 
 % ====================== ГЛАВНЫЙ ПРЕДИКАТ ======================
 consultant :-
     write('Dobro pozhalovat v ekspertnuyu  sistemu  "Konsultant  po  sotovoy  svyazi"!'), nl,
     write('Ya pomogu podobrat model telefona  po  vashim  nuzhdam.'), nl,
-    write('Otvechayte  tsiframi: 1- DA ,2- NET.'), nl, nl,
-
-    findall(P, purpose_requires(P, _), PurpList),
-    sort(PurpList, Purposes),
-    ask_purposes(Purposes, NeededPurposes),
+    write('Otvechayte tsiframi: 1- DA, 2- NET.'), nl, nl,
+    init,
+    ask_adaptive_questions,
+    get(selected_purposes, NeededPurposes),
 
     collect_required_features(NeededPurposes, Required),
     find_suitable_phones(Required, Suitable),
